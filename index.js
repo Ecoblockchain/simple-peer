@@ -98,7 +98,10 @@ function Peer (opts) {
     if (self.connected) {
       // When local peer is finished writing, close connection to remote peer.
       // Half open connections are currently not supported.
-      self._destroy()
+      // We have to wait a bit for the datachannel to flush (is there a datachannel.end()?)
+      setTimeout(function () {
+        self._destroy()
+      }, 100)
     } else {
       // If data channel is not connected when local peer is finished writing, wait until
       // data is flushed to network at "connect" event.
@@ -108,7 +111,6 @@ function Peer (opts) {
           self._destroy()
         }, 100)
       })
-    }
   })
 }
 
